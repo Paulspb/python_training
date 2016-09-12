@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.firefox.webdriver import WebDriver
 import  unittest
+from contact import Contact
 
 def is_alert_present(wd):
     try:
@@ -27,19 +28,18 @@ class test_add_contact(unittest.TestCase):
     def open_contact_page(self, wd):
         wd.find_element_by_link_text("add new").click()
 
-    def create_contact(self, wd, firstname, midName, lastNname, nickName, companyName, address1, telHome, telMobile,
-                       telWork, fax, email_1, email_2, email_3, address_2, home_2, note_2, home_page):
-        self.create_names(firstname, lastNname, midName, nickName, wd)
-        self.create_company_address1(address1, companyName, wd)
-        self.create_telephones_fax(fax, telHome, telMobile, telWork, wd)
-        self.create_emails(email_1,email_2, email_3, wd)
-        self.create_home_page(home_page, wd)
+    def create_contact(self, wd, contact):
+        self.create_names(contact.firstname, contact.lastName, contact.midName, contact.nickName, wd)
+        self.create_company_address1(contact.address1, contact.companyName, wd)
+        self.create_telephones_fax(contact.fax, contact.telHome, contact.telMobile, contact.telWork, wd)
+        self.create_emails(contact.email_1,contact.email_2, contact.email_3, wd)
+        self.create_home_page(contact.home_page, wd)
         self.create_dates(wd)
         #fill-in dates2
         wd.find_element_by_name("byear").click()
         wd.find_element_by_name("byear").clear()
         wd.find_element_by_name("byear").send_keys("2002")
-        self.create_address2_home2(address_2, home_2, note_2, wd)
+        self.create_address2_home2(contact.address_2, contact.home_2, contact.note_2, wd)
         #submit
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
 
@@ -131,10 +131,10 @@ class test_add_contact(unittest.TestCase):
         self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
         self.open_contact_page(wd)
-        self.create_contact(wd, firstname="first_name", midName="Mid_name", lastNname="Mid_name", nickName="nick_name",
+        self.create_contact(wd, Contact(firstname="first_name", lastName="Last_name", midName="Mid_name", nickName="nick_name",
                             companyName="company1", address1="address11", telHome="homet", telMobile="mobileT",
                             telWork="wrokT", fax="fas", email_1="email11", email_2="email2", email_3="email3",
-                            address_2="address2", home_2="home2", note_2="note2", home_page="homePage")
+                            address_2="address2", home_2="home2", note_2="note2", home_page="homePage"))
         self.return_to_contact(wd)
         self.logout(wd)
 
