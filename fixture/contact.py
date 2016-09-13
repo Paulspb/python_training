@@ -27,6 +27,21 @@ class ContactHelper:
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         self.return_to_contact()
 
+    def modify_first_contact(self,contact):
+        wd = self.app.wd
+        self.return_to_contact()
+        # open first concat for edit
+        wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img").click()
+        # update the contact
+        self.create_names(contact.firstname, contact.lastName, contact.midName, contact.nickName)
+        self.create_company_address1(contact.address1, contact.companyName)
+        self.create_telephones_fax(contact.fax, contact.telHome, contact.telMobile, contact.telWork)
+        self.create_emails(contact.email_1, contact.email_2, contact.email_3)
+        self.create_home_page(contact.home_page)
+        #submit update
+        wd.find_element_by_xpath("//div[@id='content']/form[1]/input[22]").click()
+        self.return_to_contact()
+
     def delete_first_contact(self):
         wd = self.app.wd
         self.return_to_contact()
