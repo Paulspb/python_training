@@ -65,6 +65,9 @@ class ContactHelper:
 
     def return_to_contact(self):
         wd = self.app.wd
+        if len(wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img")) > 0  \
+                and len(wd.find_elements_by_xpath("//div[@id='content']/form[2]/div[1]/input")) > 0:
+            return
         wd.find_element_by_link_text("home").click()
 
     def create(self, contact):
