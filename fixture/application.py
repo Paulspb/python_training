@@ -12,6 +12,13 @@ class Application:
         self.group   = GroupHelper(self)
         self.contact = ContactHelper(self)
 
+    def is_valid(self):
+        try:
+            self.wd.current_url
+            return True
+        except:
+            return False
+
     def open_home_page(self):
         wd = self.wd
         wd.get("http://localhost/addressbook/")
@@ -19,3 +26,10 @@ class Application:
     def destroy(self):
         self.wd.quit()
 
+    def change_field_input(self, field_name, text):
+        wd = self.wd
+                # if not group.name  is None:
+        if text is not None:
+            wd.find_element_by_name(field_name).click()
+            wd.find_element_by_name(field_name).clear()
+            wd.find_element_by_name(field_name).send_keys(text)
