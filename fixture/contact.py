@@ -92,3 +92,7 @@ class ContactHelper:
         wd.find_element_by_xpath("//div[@id='content']/form[2]/input[2]").click()
         self.return_to_contact()
 
+    def count(self):
+        wd = self.app.wd
+        self.return_to_contact()
+        return len(wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img"))
