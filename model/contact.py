@@ -24,3 +24,10 @@ class Contact:
         self.note_2      = note_2
         self.home_page   = home_page
         self.id          = id
+
+
+    def __repr__(self):
+        return "%s:%s" % (self.id, self.firstname,self.lastName)
+
+    def __eq__(self, other):
+        return self.id == other.id and self.firstname == other.firstname and self.lastName == other.lastName
