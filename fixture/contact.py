@@ -1,3 +1,4 @@
+from model.contact import Contact
 
 class ContactHelper:
     # constructor
@@ -99,3 +100,16 @@ class ContactHelper:
         wd = self.app.wd
         self.return_to_contact()
         return len(wd.find_elements_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img"))
+
+    def get_contact_list(self):
+        wd = self.app.wd
+        self.return_to_contact()
+        contacts = []
+        for element in wd.find_elements_by_xpath("//tr[@name='entry']"):
+            # text = element.text()
+            last_name = element.find_element_by_xpath(".//td[2]").text
+            first_name = element.find_element_by_xpath(".//td[3]").text
+            id = element.find_element_by_name("selected[]").get_attribute("value")
+            contacts.append(Contact(lastName=last_name, id=id, firstname=first_name))
+        return contacts
+
