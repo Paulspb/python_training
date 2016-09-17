@@ -1,7 +1,7 @@
 from model.contact import Contact
 
 def test_modify_first_contact(app):
-    if app.contact.count() == 0:
+    if app.contact.countContact() == 0:
         app.contact.create(Contact(firstname="add_name1"))
     old_contacts = app.contact.get_contact_list()
     contact = Contact(firstname="first_name", lastName="Last_name", midName="Mid_name", nickName="nick_name",
@@ -16,7 +16,7 @@ def test_modify_first_contact(app):
     assert sorted(old_contacts, key=Contact.id_or_max) == sorted(new_contacts, key=Contact.id_or_max)
 
 def test_modify_first_contact_name(app):
-    if app.contact.count() == 0:
+    if app.contact.countContact() == 0:
         app.contact.create(Contact(firstname="add_name1"))
     old_contacts = app.contact.get_contact_list()
     contact = Contact(
@@ -30,7 +30,7 @@ def test_modify_first_contact_name(app):
 
 
 def test_modify_first_contact_lastname(app):
-    if app.contact.count() == 0:
+    if app.contact.countContact() == 0:
         app.contact.create(Contact(firstname="add_name1"))
     old_contacts = app.contact.get_contact_list()
     contact  = Contact(
