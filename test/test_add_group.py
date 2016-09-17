@@ -5,9 +5,9 @@ def test_add_group(app):
     old_groups = app.group.get_group_list()
     group = Group(name="group1", header="group1H", footer="group1F")
     app.group.create(group)
-    # les 4.4 new_groups = app.group.get_group_list()
-    # assert len(old_groups) + 1 == len(new_groups) lesson 4.4
-    # this is hesh - function , as run faster as before !!!
+        # les 4.4 new_groups = app.group.get_group_list()
+        # assert len(old_groups) + 1 == len(new_groups) lesson 4.4
+        # this is hesh - function , as run faster as before !!!
     assert len(old_groups) + 1 == app.group.count()
     new_groups = app.group.get_group_list()
     old_groups.append(group)

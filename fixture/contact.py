@@ -80,21 +80,37 @@ class ContactHelper:
         self.return_to_contact()
         self.contact_cache = None
 
-    def modify_first_contact(self,contact):
+    def modify_first_contact(self):
+        self.modify_contact_by_index(0)
+
+    def modify_contact_by_index(self,index,contact):
         wd = self.app.wd
         self.return_to_contact()
-        # open first concat for edit
-        wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img").click()
+        self.select_contact_by_index(index)
         self.fill_contact_form(contact)
         #submit update
-        wd.find_element_by_xpath("//div[@id='content']/form[1]/input[22]").click()
+            # wd.find_element_by_xpath("//div[@id='content']/form[1]/input[22]").click()
+        wd.find_element_by_name("update").click()
         self.return_to_contact()
         self.contact_cache = None
 
+    def select_contact_by_index(self,index):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click()
+        # open index element
+        index = index +2
+        wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr["+str(index)+"]/td[8]/a/img").click()
+        #wd.find_elements_by_css_selector("a[href='edit.php?id="+str(index)+"']").click();
+
+
     def delete_first_contact(self):
+        self.delete_contact_by_index(0)
+
+    def delete_contact_by_index(self,index):
         wd = self.app.wd
         self.return_to_contact()
-        wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img").click()
+        self.select_contact_by_index(index)
+        #wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img").click()
         wd.find_element_by_xpath("//div[@id='content']/form[2]/input[2]").click()
         self.return_to_contact()
         self.contact_cache = None
