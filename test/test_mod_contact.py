@@ -11,6 +11,7 @@ def test_modify_first_contact(app):
                       telWork="wrokT", fax="fas", email_1="email11", email_2="email2", email_3="email3",
                       address_2="address2", home_2="home2", note_2="note2", home_page="homePage")
     contact.id = old_contacts[index].id
+    contact.address1 = index
     app.contact.modify_contact_by_index(index,contact)
     new_contacts = app.contact.get_contact_list()
     assert len(old_contacts) == len(new_contacts)
@@ -25,6 +26,7 @@ def test_modify_first_contact_name(app):
     contact = Contact(
              firstname="first_name_mod1Name")
     contact.id = old_contacts[index].id
+    contact.address1 = index
     app.contact.modify_contact_by_index(index, contact)
     new_contacts = app.contact.get_contact_list()
     assert len(old_contacts) == len(new_contacts)
@@ -40,6 +42,7 @@ def test_modify_first_contact_lastname(app):
     contact  = Contact(
              lastName="Last_name_mod1LastName")
     contact.id = old_contacts[index].id
+    contact.address1 = index
     app.contact.modify_contact_by_index(index, contact)
     new_contacts = app.contact.get_contact_list()
     assert len(old_contacts) == len(new_contacts)
