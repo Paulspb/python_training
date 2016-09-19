@@ -1,5 +1,5 @@
 from model.contact import Contact
-
+import re
 class ContactHelper:
     # constructor
     def __init__(self, app):
@@ -86,7 +86,7 @@ class ContactHelper:
     def modify_contact_by_index(self,index,contact):
         wd = self.app.wd
         self.return_to_contact()
-        self.select_contact_by_index(index)
+        self.select_contact_to_edit_by_index(index)
         self.fill_contact_form(contact)
         #submit update
             # wd.find_element_by_xpath("//div[@id='content']/form[1]/input[22]").click()
@@ -94,13 +94,58 @@ class ContactHelper:
         self.return_to_contact()
         self.contact_cache = None
 
-    def select_contact_by_index(self,index):
+    def select_contact_to_edit_by_index(self, index):
         wd = self.app.wd
-        wd.find_elements_by_name("selected[]")[index].click()
-        # open index element
-        index = index +2
-        wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr["+str(index)+"]/td[8]/a/img").click()
-        #wd.find_elements_by_css_selector("a[href='edit.php?id="+str(index)+"']").click();
+            # open index element - my version based on recorder
+        #wd.find_elements_by_name("selected[]")[index].click()
+        #ind = str(index +2)
+        #wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr["+ind+"]/td[8]/a/img").click()
+            # other version from lesson 5_2
+        row = wd.find_elements_by_name("entry")[index]
+        cell = row.find_elements_by_tag_name("td")[7]
+        ##cell.find_element_by_name("a").click()  <-- not valid !!!! remember
+        cell.find_element_by_tag_name("a").click()
+
+
+    def select_contact_to_view_by_index(self,index):
+        wd = self.app.wd
+            # other version from lesson 5_2
+        row = wd.find_elements_by_name("entry")[index]
+        cell = row.find_elements_by_tag_name("td")[6]
+        ##cell.find_element_by_name("a").click()  <-- not valid !!!! remember
+        cell.find_element_by_tag_name("a").click()
+
+
+    def get_contact_from_info_from_edit_page(self,index):
+        wd = self.app.wd
+        self.select_contact_to_edit_by_index(index)
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        homephone = wd.find_element_by_name("home").get_attribute("value")
+        workphone = wd.find_element_by_name("work").get_attribute("value")
+        mobilephone = wd.find_element_by_name("mobile").get_attribute("value")
+        phone2 = wd.find_element_by_name("phone2").get_attribute("value")
+        # home task 14
+        email1 = wd.find_element_by_name("email").get_attribute("value")
+        email2 = wd.find_element_by_name("email2").get_attribute("value")
+        email3 = wd.find_element_by_name("email3").get_attribute("value")
+        address = wd.find_element_by_name("address").get_attribute("value")
+        return Contact(firstname = firstname, lastName = lastname, id= id,
+            telHome = homephone, telMobile = mobilephone, telWork = workphone, home_2 = phone2,
+                       email_1=email1,email_2=email2,email_3=email3,address1=address)
+
+    def get_contact_from_view_page(self,index):
+        wd = self.app.wd
+        self.select_contact_to_view_by_index(index)
+        text =wd.find_element_by_id("content").text
+        homephone = re.search("H: (.*)",text).group(1)
+        workphone = re.search("W: (.*)", text).group(1)
+        mobilephone = re.search("M: (.*)", text).group(1)
+        phone2      = re.search("P: (.*)", text).group(1)
+        self.return_to_contact()
+        return Contact(telHome=homephone, telMobile=mobilephone, telWork=workphone, home_2=phone2)
+
 
 
     def delete_first_contact(self):
@@ -109,7 +154,7 @@ class ContactHelper:
     def delete_contact_by_index(self,index):
         wd = self.app.wd
         self.return_to_contact()
-        self.select_contact_by_index(index)
+        self.select_contact_to_edit_by_index(index)
         #wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr[2]/td[8]/a/img").click()
         wd.find_element_by_xpath("//div[@id='content']/form[2]/input[2]").click()
         self.return_to_contact()
@@ -123,15 +168,26 @@ class ContactHelper:
     contact_cache = None
 
     def get_contact_list(self):
+        #home task 14
         if self.contact_cache is None:
             wd = self.app.wd
             self.return_to_contact()
             self.contact_cache = []
             for element in wd.find_elements_by_xpath("//tr[@name='entry']"):
                 # text = element.text()
+                    # cells = row.find_elements_by_tag_name("td")
+                    # firstname = cell[1].text
                 last_name = element.find_element_by_xpath(".//td[2]").text
                 first_name = element.find_element_by_xpath(".//td[3]").text
                 id = element.find_element_by_name("selected[]").get_attribute("value")
-                self.contact_cache.append(Contact(lastName=last_name, id=id, firstname=first_name))
+                # less 5.3 all_phones = element.find_element_by_xpath(".//td[6]").text.splitlines()
+                all_phones  = element.find_element_by_xpath(".//td[6]").text
+                # home task 14
+                all_emails  = element.find_element_by_xpath(".//td[5]").text
+                full_address = element.find_element_by_xpath(".//td[4]").text
+
+                self.contact_cache.append(Contact(lastName=last_name, id=id, firstname=first_name,address1=full_address,
+                        all_phones_from_home_page= all_phones, all_emails_from_home_page=all_emails))
+                        # less 5.3 telHome= all_phones[0],telMobile=all_phones[1], telWork = all_phones[2],home_2=all_phones[3]))
         return self.contact_cache
 
