@@ -7,6 +7,9 @@ class ContactHelper:
 
     def open_contact_page(self):
         wd = self.app.wd
+        if len(wd.find_elements_by_name("photo")) > 0  \
+                and len(wd.find_elements_by_name("amonth")) > 0:
+            return
         wd.find_element_by_link_text("add new").click()
 
     def fill_contact_form(self, contact):
