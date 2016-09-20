@@ -8,7 +8,10 @@ fixture = None
 def app(request):
     global fixture
     if fixture is None:
-        fixture = Application()
+        # access to pytest_addoption(parser):
+        browser =  request.config.getoption("--browser")
+        # lesson 5,5  using hook - зацепка - из описаний pyton
+        fixture = Application(browser=browser)
     else:
         if not fixture.is_valid():
             fixture = Application()
@@ -23,3 +26,6 @@ def stop(request):
         fixture.destroy()
     request.addfinalizer(fin)
 
+# lesson 5.5 from cmd line
+def pytest_addoption(parser):
+    parser.addoption("--browser", action="store", default="firefox")
