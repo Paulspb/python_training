@@ -142,10 +142,26 @@ class ContactHelper:
         wd = self.app.wd
         self.select_contact_to_view_by_index(index)
         text =wd.find_element_by_id("content").text
-        homephone = re.search("H: (.*)",text).group(1)
-        workphone = re.search("W: (.*)", text).group(1)
-        mobilephone = re.search("M: (.*)", text).group(1)
-        phone2      = re.search("P: (.*)", text).group(1)
+        if re.search("H: (.*)", text) is not None:
+            homephone = re.search("H: (.*)",text).group(1)
+        else:
+            homephone = ''
+
+        if re.search("W: (.*)", text) is not None:
+            workphone = re.search("W: (.*)", text).group(1)
+        else:
+            workphone = ''
+
+        if re.search("M: (.*)", text) is not None:
+            mobilephone = re.search("M: (.*)", text).group(1)
+        else:
+            mobilephone = ''
+
+        if re.search("P: (.*)", text) is not None:
+            phone2 = re.search("P: (.*)", text).group(1)
+        else:
+            phone2 = ''
+
         self.return_to_contact()
         return Contact(telHome=homephone, telMobile=mobilephone, telWork=workphone, home_2=phone2)
 

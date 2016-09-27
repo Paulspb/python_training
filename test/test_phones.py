@@ -15,6 +15,8 @@ def test_phones_on_home_page(app):
 def test_phones_on_contact_view_page(app):
     contact_from_view_page = app.contact.get_contact_from_view_page(0)
     contact_from_edit_page = app.contact.get_contact_from_info_from_edit_page(0)
+#    contact_from_view_page = app.contact.get_contact_from_view_page()[0]
+#    contact_from_edit_page = app.contact.get_contact_from_info_from_edit_page()[0]
     assert contact_from_view_page.telHome   == contact_from_edit_page.telHome
     assert contact_from_view_page.telMobile == contact_from_edit_page.telMobile
     assert contact_from_view_page.telWork == contact_from_edit_page.telWork
@@ -51,15 +53,14 @@ def merge_phones_like_on_home_page(contact):
 
 def merge_emails_like_on_home_page(contact):
     return "\n".join(filter(lambda x: x != "",
-                            map(lambda x: clear(x),
-                                filter(lambda x: x is not None,
-                                       [contact.email_1,contact.email_2,contact.email_3]))))
+                            filter(lambda x: x is not None,
+                                       [contact.email_1,contact.email_2,contact.email_3])))
 
 
 def merge_address_like_on_home_page(contact):
-    return "\n".join(filter(lambda x: x != "",
-                            map(lambda x: clear(x),
-                                filter(lambda x: x is not None,
-                                       [contact.address1]))))
+    return "\n".join(contact.address1)
+                                #filter(lambda x: x is not None,
+                                #       [contact.address1])))
+
 
 
