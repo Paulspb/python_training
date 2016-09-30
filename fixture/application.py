@@ -10,7 +10,8 @@ class Application:
         if browser =='firefox':
             # lesson 5.5 self.wd = WebDriver()
             self.wd = webdriver.Firefox()
-        elif browser =='chrom':
+        # elif browser =='chrom': sep 28
+        elif browser =='chrome':
             self.wd = webdriver.Chrome()
         elif browser == 'ie':
             self.wd = webdriver.Ie()
