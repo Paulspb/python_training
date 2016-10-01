@@ -2,6 +2,7 @@
 import pytest
 import json
 import os.path
+import importlib
 from fixture.application import Application
 
 fixture = None
@@ -50,3 +51,20 @@ def pytest_addoption(parser):
         # less 6.1
         #parser.addoption("--baseUrl", action="store", default="http://localhost/addressbook/")
     parser.addoption("--target", action="store", default="target.json")
+
+# less 6.5
+def pytest_generate_tests(metafunc):
+    for fixture in metafunc.fixturenames:
+        if fixture.startswith("data_"):
+                    # def test_add_group(app, data_groups):
+                    # here data loading from data/groups.json
+            testdata = load_form_module(fixture[5:])
+            # it need to paramatrise our test function
+                                            # for bnest interpretation fo data
+                                            #ids=[str(x) for x in testdata])
+            metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])
+
+
+def load_form_module(module):
+        # here data loading from data/groups.json
+    return importlib.import_module("data.%s" % module).testdata

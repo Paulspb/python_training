@@ -1,23 +1,27 @@
 from model.group import Group
-import random
-import string
+#import random
+#import string
 
 
-constant = [
+# less 6.5
+#constant = [
+testdata = [
     Group(name="group1", header="group1H", footer="group1F"),
     Group(name="group2", header="group2H", footer="group2F")
 ]
 
-def random_String(prefix,maxlen):
-    symbol = string.ascii_letters + string.digits + " "*10
-    return prefix + "".join([random.choice(symbol) for i in range(random.randrange(maxlen))])
+# less 6.5
+#def random_String(prefix,maxlen):
+#    symbol = string.ascii_letters + string.digits + " "*10
+#    return prefix + "".join([random.choice(symbol) for i in range(random.randrange(maxlen))])#
+#
+#
 
-
-testdata = [Group(name="", header="", footer="")] + [
-      Group(name=random_String("name",10),header=random_String("header",20),footer=random_String("footer",15))
-    for i in range(5)
-      # this is 5 time for random  + one 'empty'
-]
+#testdata = [Group(name="", header="", footer="")] + [
+#      Group(name=random_String("name",10),header=random_String("header",20),footer=random_String("footer",15))
+#    for i in range(5)
+#      # this is 5 time for random  + one 'empty'
+#]
 
 #testdata = [
 #      Group(name=random_String("name1",10),header=random_String("header1",20),footer=random_String("footer1",15))

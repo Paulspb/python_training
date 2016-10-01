@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from model.group import Group
-import pytest
-#from data.add_group import testdata
-from data.add_group import constant as testdata
+    # less 6.5 import pytest
+    #from data.add_group import testdata
+    #from data.groups import constant as testdata
 
-#less 6.3 move def random_String(prefix,maxlen):  -> data.addGroup.py
+    #less 6.3 move def random_String(prefix,maxlen):  -> data.addGroup.py
 
-@pytest.mark.parametrize("group", testdata, ids=[repr(x) for x in testdata ])
-def test_add_group(app,group):
-    # -revoke less 6.3for group in testdata:
-        # less 5.4 def test_add_group(app):
+    #-revoke -less 6.5 @pytest.mark.parametrize("group", testdata, ids=[repr(x) for x in testdata ])
+    #-revoke- less 6.5def test_add_group(app,group):
+    # it could be error if data_gorup , but not data_groups
+def test_add_group(app, data_groups):
+        group = data_groups
+            # -revoke less 6.3for group in testdata:
+            # less 5.4 def test_add_group(app):
         old_groups = app.group.get_group_list()
             # lesson 5.4     group = Group(name="group1", header="group1H", footer="group1F")
         app.group.create(group)
