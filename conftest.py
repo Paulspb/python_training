@@ -17,7 +17,9 @@ def app(request):
     global fixture
     global target
         # access to pytest_addoption(parser):
-    browser = request.config.getoption("--browser")
+        # less 5.5:
+    browser  = request.config.getoption("--browser")
+    base_url = request.config.getoption("--baseUrl")
     if target is None:
             # less 6.2
         config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), request.config.getoption("--target"))
@@ -29,7 +31,12 @@ def app(request):
             # lesson 5,5  using hook - зацепка - из описаний pyton
     if fixture is None or not fixture.is_valid():
             # on less 6.1fixture = Application(browser=browser,base_url=base_url)
-        fixture = Application(browser=browser)
+            # access to pytest_addoption(parser):
+            # less 5.5:
+        #browser  = request.config.getoption("--browser")
+        #base_url = request.config.getoption("--baseUrl")
+            # less 5.5 fixture = Application(browser=browser)
+        fixture = Application(browser=browser, base_url=base_url)
                 # less 6.1 fixture = Application(browser=browser, base_url=target['baseUrl'])
                 #fixture.session.ensure_login(username="admin", password="secret")
     fixture.session.ensure_login(username=target['username'], password=target['password'])
@@ -47,11 +54,12 @@ def stop(request):
         # less 6.1
     return fixture
 
-# lesson 5.5 from cmd line
+# lesson 5.5 from cmd line . it add parameters from cmd line. it access from def app(request)
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="firefox")
         # less 6.1
         #parser.addoption("--baseUrl", action="store", default="http://localhost/addressbook/")
+    parser.addoption("--baseUrl", action="store", default="http://localhost/addressbook/")
     parser.addoption("--target", action="store", default="target.json")
 
 # less 6.5
