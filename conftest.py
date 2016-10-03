@@ -3,6 +3,8 @@ import pytest
 import json
 import os.path
 import importlib
+    #less 6.6
+import jsonpickle
 from fixture.application import Application
 
 fixture = None
@@ -55,16 +57,40 @@ def pytest_addoption(parser):
 # less 6.5
 def pytest_generate_tests(metafunc):
     for fixture in metafunc.fixturenames:
+        # for fixture with prefix -data_ -
         if fixture.startswith("data_"):
                     # def test_add_group(app, data_groups):
                     # here data loading from data/groups.json
-            testdata = load_form_module(fixture[5:])
+            testdata = load_from_module(fixture[5:])
+            # it need to paramatrise our test function
+                                            # for bnest interpretation fo data
+                                            #ids=[str(x) for x in testdata])
+            metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])
+
+        elif fixture.startswith("json_"):
+        #-revoke- less 6.6 elif fixture.startswith("data_"):
+                    # here data loading from data/groups.json
+            testdata = load_from_json(fixture[5:])
             # it need to paramatrise our test function
                                             # for bnest interpretation fo data
                                             #ids=[str(x) for x in testdata])
             metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])
 
 
-def load_form_module(module):
+def load_from_module(module):
         # here data loading from data/groups.json
     return importlib.import_module("data.%s" % module).testdata
+
+
+def load_from_json(file):
+        # here data loading from data/groups.json
+        # how  to tell the prog : take input from Group or contact ? take  one lib called
+        # jsonpickle with option : jsonpickle.set_encoder_options("json", indent=2)
+        # then load result file __file_ + data/groups.json
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data/%s.json" % file)) as f:
+        return jsonpickle.decode(f.read())
+
+
+    #pickle.dump()
+
+    #return importlib.import_module("data.%s" % module).testdata

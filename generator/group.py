@@ -2,7 +2,8 @@ from model.group import Group
 import random
 import string
 import os.path
-import json
+    #less 6.6 -revoke-   import json
+import jsonpickle
 import getopt
 import sys
 
@@ -45,8 +46,10 @@ file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", f)
 
 #define writubng to file  , where .dumps  convert structure to json-format
 with open(file, "w") as out:
-    #f.writable(json.dumps(testdata))
-        # it need to clarify how to convert Group to json where __dict__ keeps all __init__
-    #    f.write(json.dumps(testdata, default=lambda x: x.__dict__))
-        # now split one line to several lines
-    out.write(json.dumps(testdata, default=lambda x: x.__dict__, indent=2))
+        #f.writable(json.dumps(testdata))
+            # it need to clarify how to convert -Group- to json where __dict__ keeps all __init__
+        #    f.write(json.dumps(testdata, default=lambda x: x.__dict__))
+            # now split one line to several lines
+    jsonpickle.set_encoder_options("json", indent=2)
+        #-revoke- less 6.6 out.write(json.dumps(testdata, default=lambda x: x.__dict__, indent=2))
+    out.write(jsonpickle.encode(testdata))

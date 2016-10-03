@@ -9,8 +9,9 @@ from model.group import Group
     #-revoke -less 6.5 @pytest.mark.parametrize("group", testdata, ids=[repr(x) for x in testdata ])
     #-revoke- less 6.5def test_add_group(app,group):
     # it could be error if data_gorup , but not data_groups
-def test_add_group(app, data_groups):
-        group = data_groups
+        # less 6.6 def test_add_group(app, data_groups):
+def test_add_group(app, json_groups):
+        group = json_groups
             # -revoke less 6.3for group in testdata:
             # less 5.4 def test_add_group(app):
         old_groups = app.group.get_group_list()
