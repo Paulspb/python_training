@@ -37,7 +37,9 @@ class Application:
         wd = self.wd
             #-revoke- less 5.5
             # wd.get("http://localhost/addressbook/")
-        wd.get(self.base_url)
+        wd.get("http://localhost/addressbook/")
+            # not work after 7.1
+        #wd.get(self.base_url)
 
     def destroy(self):
         self.wd.quit()

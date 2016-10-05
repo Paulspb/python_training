@@ -28,18 +28,18 @@ def load_config(file):
             # lesson 5,5  using hook - зацепка - из описаний pyton
     return target
 
-@pytest.fixture
 #-------------------- fixture #1 ------------
+@pytest.fixture
 def app(request):
     global fixture
     # revoke  less 7.1 global target
         # access to pytest_addoption(parser) via app(request):
         # less 5.5:
     browser  = request.config.getoption("--browser")
-    # -revoke- less 7.2:     base_url = request.config.getoption("--baseUrl")
+        # -revoke- less 7.2:     base_url = request.config.getoption("--baseUrl")
         # less 7.1  take from target.json ONLY block -web-
     web_config = load_config(request.config.getoption("--target"))['web']
-    # less 7.1 if target is None:
+        # less 7.1 if target is None:
             # less 6.2
         # less 7.1 config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), request.config.getoption("--target"))
             # -del less 6.2 with open(request.config.getoption("--target")) as config_file:
@@ -52,14 +52,14 @@ def app(request):
             # on less 6.1fixture = Application(browser=browser,base_url=base_url)
             # access to pytest_addoption(parser):
             # less 5.5:
-        #browser  = request.config.getoption("--browser")
-        #base_url = request.config.getoption("--baseUrl")
+                #browser  = request.config.getoption("--browser")
+                #base_url = request.config.getoption("--baseUrl")
             # less 5.5 fixture = Application(browser=browser)
-        # less 7.1         fixture = Application(browser=browser, base_url=base_url)
+            # less 7.1         fixture = Application(browser=browser, base_url=base_url)
         fixture = Application(browser=browser, base_url=web_config['baseUrl'])
                 # less 6.1 fixture = Application(browser=browser, base_url=target['baseUrl'])
                 #fixture.session.ensure_login(username="admin", password="secret")
-    #less 7.1 fixture.session.ensure_login(username=target['username'], password=target['password'])
+            #less 7.1 fixture.session.ensure_login(username=target['username'], password=target['password'])
     fixture.session.ensure_login(username=web_config['username'], password=web_config['password'])
         # less 6.1
     return fixture
