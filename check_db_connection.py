@@ -27,5 +27,22 @@ try:
     for row in cursor.fetchall():
         print(row)
 finally:
+     pass
+     #connection.close()
+
+print("------------------- after pip install pip install PyMySQL   addressbook DB------------------")
+try:
+    cursor = connection.cursor()
+        # cursor point on place into database from http: localhost/phpmyadmin/sql.php?db......
+    cursor.execute(
+        "select id, firstname, lastname , nickname, company, "
+        "title, address, home, mobile, work, fax , email, email2, email3, address2, phone2, notes "
+        " from addressbook where deprecated = '0000-00-00' ")
+        # then doing on whole lines
+    for row in cursor.fetchall():
+        print(row)
+finally:
      connection.close()
+
+
 
