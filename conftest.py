@@ -28,8 +28,8 @@ def load_config(file):
             # lesson 5,5  using hook - зацепка - из описаний pyton
     return target
 
-#-------------------- fixture #1 ------------
 @pytest.fixture
+#-------------------- fixture #1 ------------
 def app(request):
     global fixture
     # revoke  less 7.1 global target
@@ -64,6 +64,7 @@ def app(request):
         # less 6.1
     return fixture
 #------------------------- less 7.1 DB
+#-------------------- fixture #2 ----------------------------------------
     # add something for DB connect
     # scope = "session" ---- for init at the begon of session and stop at hte end (ones only)
 @pytest.fixture(scope = "session")
@@ -79,7 +80,6 @@ def db(request):
     request.addfinalizer(fin)
     return dbfixture
 
-#-------------------- fixture #2 ----------------------------------------
 @pytest.fixture(scope = "session", autouse= True)
     # read data from -target.json-
 def stop(request):
@@ -91,6 +91,12 @@ def stop(request):
     request.addfinalizer(fin)
         # less 6.1
     return fixture
+#----less 7.5
+@pytest.fixture
+def check_ui(request):
+            # boolean option
+    return request.config.getoption("--check_ui")
+
 
 # lesson 5.5 from cmd line . it add parameters from cmd line. it access from def app(request)
 def pytest_addoption(parser):
@@ -98,6 +104,8 @@ def pytest_addoption(parser):
         # less 6.1
         #parser.addoption("--baseUrl", action="store", default="http://localhost/addressbook/")
     parser.addoption("--target", action="store", default="target.json")
+        # less 7.5
+    parser.addoption("--check_ui", action="store_true")
 
 # less 6.5
 def pytest_generate_tests(metafunc):

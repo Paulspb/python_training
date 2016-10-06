@@ -109,6 +109,13 @@ class ContactHelper:
         ##cell.find_element_by_name("a").click()  <-- not valid !!!! remember
         cell.find_element_by_tag_name("a").click()
 
+        # less 7.4
+    def select_contact_to_edit_by_id(self, id):
+        wd = self.app.wd
+                #less 7.4, home #20
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()
+        wd.find_element_by_css_selector("a[href='edit.php?id=%s']" % id).click()
+
 
     def select_contact_to_view_by_index(self,index):
         wd = self.app.wd
@@ -178,6 +185,15 @@ class ContactHelper:
         wd.find_element_by_xpath("//div[@id='content']/form[2]/input[2]").click()
         self.return_to_contact()
         self.contact_cache = None
+
+    def delete_contact_by_id(self,id):
+        wd = self.app.wd
+        self.return_to_contact()
+        self.select_contact_to_edit_by_id(id)
+        wd.find_element_by_xpath("//div[@id='content']/form[2]/input[2]").click()
+        self.return_to_contact()
+        self.contact_cache = None
+
 
     def count(self):
         wd = self.app.wd
