@@ -1,5 +1,6 @@
 from model.group import Group
 from timeit import timeit
+from model.contact import Contact
 
 
 def test_group_list(app,db):
@@ -11,3 +12,14 @@ def test_group_list(app,db):
     db_list = map(clean, db.get_group_list())
 
     assert sorted(ui_list, key=Group.id_or_max) == sorted(db_list, key=Group.id_or_max)
+
+    # home task 21
+def test_contact_list(app,db):
+        # printout a timestamp less.7.3
+    print(timeit(lambda: app.contact.get_contact_list(),number=1))
+    ui_list = app.contact.get_contact_list()
+    def clean(contact):
+        return Contact(id=contact.id, firstname=contact.firstname.strip(), lastName=contact.lastName.strip() )
+    db_list = map(clean, db.get_contact_list())
+
+    assert sorted(ui_list, key=Contact.id_or_max) == sorted(db_list, key=Contact.id_or_max)
