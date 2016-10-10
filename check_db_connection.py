@@ -30,6 +30,7 @@ finally:
      pass
      #connection.close()
 
+
 print("------------------- after pip install pip install PyMySQL   addressbook DB------------------")
 try:
     cursor = connection.cursor()
@@ -47,12 +48,24 @@ finally:
 
 #---------- less 7.7
 from fixture.orm import ORMFixture
-print("------------------- after pip install pony less 7.7------------------")
+print("------------------- after pip install pony less 7.7  check GROUP via --- pony ------------------")
 #connection = mysql.connector.connect(host="127.0.0.1", database="addressbook", user="root", password="")
 db = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
-
 try:
     l = db.get_group_list()
+
+    for item in l:
+        print(item)
+    print(len(l))
+finally:
+     pass
+
+
+print("------------------- after pip install pony less 7.7  check Contact via ORM or pony ------------------")
+#db = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
+
+try:
+    l = db.get_contact_list()
 
     for item in l:
         print(item)
