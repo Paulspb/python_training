@@ -1,5 +1,4 @@
 from model.group import Group
-from random import randrange
 import random
 
 def test_mod_group(app, db):

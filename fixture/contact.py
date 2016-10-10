@@ -97,6 +97,19 @@ class ContactHelper:
         self.return_to_contact()
         self.contact_cache = None
 
+        #home 20
+    def modify_contact_by_id(self,contact_id,contact):
+        wd = self.app.wd
+        self.return_to_contact()
+        self.select_contact_to_edit_by_id(contact_id)
+        self.fill_contact_form(contact)
+        #submit update
+            # wd.find_element_by_xpath("//div[@id='content']/form[1]/input[22]").click()
+        wd.find_element_by_name("update").click()
+        self.return_to_contact()
+        self.contact_cache = None
+
+
     def select_contact_to_edit_by_index(self, index):
         wd = self.app.wd
             # open index element - my version based on recorder
