@@ -45,4 +45,17 @@ finally:
      connection.close()
 
 
+#---------- less 7.7
+from fixture.orm import ORMFixture
+print("------------------- after pip install pony less 7.7------------------")
+#connection = mysql.connector.connect(host="127.0.0.1", database="addressbook", user="root", password="")
+db = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
 
+try:
+    l = db.get_group_list()
+
+    for item in l:
+        print(item)
+    print(len(l))
+finally:
+     pass
