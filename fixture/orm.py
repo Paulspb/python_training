@@ -15,6 +15,9 @@ class ORMFixture:
         name = Optional(str, column = 'group_name')
         header = Optional(str, column = 'group_header')
         footer = Optional(str, column = 'group_footer')
+                # less 7.8
+                # we can't write directly a link on -Contact-
+        contacts = Set(lambda: ORMFixture.ORMContact, table= "address_in_groups", column= "id", reverse="groups", lazy=True )
 
     class ORMContact(db.Entity):
         _table_ = 'addressbook'
@@ -22,13 +25,15 @@ class ORMFixture:
         firstName = Optional(str, column = 'firstname')
         lastName = Optional(str, column='lastname')
         deprecated = Optional(datetime, column ='deprecated')
+                #less 7.8
+        groups = Set(lambda: ORMFixture.ORMGroup, table= "address_in_groups", column= "group_id", reverse="contacts", lazy=True)
 
         # relation between definition and  real our DB
         # this is constructor
     def __init__(self, host, name, user, password):
                 # if c.deprecated is not valid fror SQL
                 # self.db.bind('mysql', host=host, database=name, user=user, password=password)
-        self.db.bind('mysql', host=host, database=name, user=user, password=password,conv=decoders)
+        self.db.bind('mysql', host=host, database=name, user=user, password=password, conv=decoders)
 
             # here doing the relation
         self.db.generate_mapping()
@@ -55,7 +60,6 @@ class ORMFixture:
             #return Group(id =str(group.id), name=group.name, header=group.header, footer=group.footer)
             #- mnogo !!!return Contact(id =str(contact.id), firstname=contact.firstname, lastName=contact.lastname, companyName=contact.company, address1=contact.address)
             return Contact(id=str(contact.id), firstname=contact.firstName, lastName=contact.lastName)
-
         return list(map(convert, contacts))
 
     @db_session
@@ -65,8 +69,13 @@ class ORMFixture:
         #return self.convert_contacts_to_model(select(c for c in ORMFixture.ORMContact ))
 
 
-
-
-
+#--------------- lesson 7.8 -group name- placed within -contact- ----------------------------
+    @db_session # means execute within connection to DB
+    def get_contact_in_group(self,group):
+        orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == group.id))[0]
+        #orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == group.id))
+                # take only first element via [0]
+                # there is object called -orm_group-
+        return self.convert_contacts_to_model(orm_group.contacts)
 
 
