@@ -106,7 +106,7 @@ class ContactHelper:
             print("!!!!!!!! no any group asssigned for this contact : 'first name' ="
                   + contact.firstname + "   'last name = " +contact.lastName)
         else:
-            self.adding_one_group(contact.id, new_group)
+            self.delete_from_one_group(contact.id, new_group)
             self.contact_cache = None
 
 
@@ -134,7 +134,7 @@ class ContactHelper:
                         #if group ralated with any contact
                     if len(l1) != 0:
                         for item in l1:
-                            print(item)
+                            #print(item)
                                 # if the contact present into this group, then marks as 0
                             if item.id == contact.id:
                                 element.header = 0
@@ -144,22 +144,25 @@ class ContactHelper:
                     pass
 
                 #init value
-            choice = 2
-            if moving == "add":
-                choice = 111
+        choice = 2
+        if moving == "add":
+            choice = 111
 
-            if moving == "remove":
-                choice = 0
+        if moving == "remove":
+            choice = 0
 
             # read first group marked as '111' for add (still not used in contact)
             # read first group marked as '0' for remove (still not used in contact)
 
-            for one_group in temp_group:
-                if one_group.header == choice:
+        for one_group in temp_group:
+            if one_group.header == choice:
+                if choice == 111:
                     print(" *********** this group adding:  " + one_group.id + " " + one_group.name)
-                    return  one_group.name
+                if choice == 0:
+                    print(" *********** this group removing:  " + one_group.id + " " + one_group.name)
+            return  one_group.name
 
-            return new_group_name
+        return new_group_name
 
 
 
@@ -198,6 +201,32 @@ class ContactHelper:
             wd.find_element_by_css_selector("input[value='Add to']").click()
 
         self.return_to_contact()
+
+
+    def delete_from_one_group(self, contact_id, new_group):
+        wd = self.app.wd
+            # select deleting group by -new_group-
+        if len(wd.find_elements_by_name("group")) > 0:
+                # not work wd.find_element_by_xpath("//select[@name='to_group']/option[text()='%s']" % new_group).click
+            el = wd.find_element_by_xpath("//select[@name='group']")
+            for option in el.find_elements_by_tag_name('option'):
+                if option.text == new_group:
+                    option.click()
+                    break
+
+            # if the contact is still available, tehn click on contact for adding
+        if len(wd.find_elements_by_name("selected[]")) > 0:
+            wd.find_element_by_css_selector("input[value='" + contact_id + "']").click()
+            wd.find_element_by_css_selector("input[name='remove']").click()
+
+        self.return_to_contact()
+            # return default value [all]
+        el = wd.find_element_by_xpath("//select[@name='group']")
+        for option in el.find_elements_by_tag_name('option'):
+            if option.text == '[all]':
+                option.click()
+                break
+
 
 
     #--------------------------------------
