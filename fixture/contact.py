@@ -1,4 +1,7 @@
 from model.contact import Contact
+from model.group import Group
+from fixture.orm import ORMFixture
+
 import re
 class ContactHelper:
     # constructor
@@ -83,6 +86,122 @@ class ContactHelper:
         self.return_to_contact()
         self.contact_cache = None
 
+    def add_to_one_group(self, contact, groups):
+        wd = self.app.wd
+        self.return_to_contact()
+        new_group = self.select_one_group(contact, groups, "add")
+            #print(contact.id, contact.firstname, contact.lastName, new_group)
+        if new_group == "xxx":
+            print("!!! all groups is already added to contact : 'first name' =" + contact.firstname)
+        else:
+            self.adding_one_group(contact.id, new_group)
+            self.contact_cache = None
+
+    def remove_from_one_group(self, contact, groups):
+        wd = self.app.wd
+        self.return_to_contact()
+        new_group = self.select_one_group(contact, groups, "remove")
+            #print(contact.id, contact.firstname, contact.lastName, new_group)
+        if new_group == "xxx":
+            print("!!!!!!!! no any group asssigned for this contact : 'first name' ="
+                  + contact.firstname + "   'last name = " +contact.lastName)
+        else:
+            self.adding_one_group(contact.id, new_group)
+            self.contact_cache = None
+
+
+    def select_one_group(self, contact, groups, moving):
+        dborm  = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
+            # create temp_group list  with whole names of group
+        temp_group = []
+        new_group_name = "xxx"
+            # movement = 'add' or 'remove'
+            ## fill-in temporary groups  with mark   '111'
+        for group1 in groups:
+           temp_group.append(Group(id=str(group1.id), name=group1.name, header = 111, footer=group1))
+
+        #print(contact.id, contact.firstname, contact.lastName)
+        #for y in temp_group:
+        ##   print(y.name, y.id, y.header, y.footer)
+
+
+        for element in temp_group:
+                # group_id is not 0
+            if element.id != 0:
+                try:
+                    l1 = dborm.get_contact_in_group(Group(id=str(element.id)))
+                    #get_contact_in_group
+                        #if group ralated with any contact
+                    if len(l1) != 0:
+                        for item in l1:
+                            print(item)
+                                # if the contact present into this group, then marks as 0
+                            if item.id == contact.id:
+                                element.header = 0
+
+                        #print(len(l1))
+                finally:
+                    pass
+
+                #init value
+            choice = 2
+            if moving == "add":
+                choice = 111
+
+            if moving == "remove":
+                choice = 0
+
+            # read first group marked as '111' for add (still not used in contact)
+            # read first group marked as '0' for remove (still not used in contact)
+
+            for one_group in temp_group:
+                if one_group.header == choice:
+                    print(" *********** this group adding:  " + one_group.id + " " + one_group.name)
+                    return  one_group.name
+
+            return new_group_name
+
+
+
+    #-  home 22 ----------------------------------------------------
+    #String
+    #newGroup = "xxx";
+    #newGroup = selectOneGroup(contact, groups, "add");
+    #if (newGroup == "xxx") {
+    #System.out.println("!!! all groups is already added to contact : 'first name' =" + contact.getFirstname());
+    #} else {
+    #selectOneGroupForAdding(contact.getId(), newGroup);
+    #contactCache = null;
+    #}
+
+
+    def adding_one_group(self, contact_id, new_group):
+        wd = self.app.wd
+            # select adding group by -new_group-
+        if len(wd.find_elements_by_name("to_group")) > 0:
+                # not work wd.find_element_by_xpath("//select[@name='to_group']/option[text()='%s']" % new_group).click
+            el = wd.find_element_by_xpath("//select[@name='to_group']")
+            for option in el.find_elements_by_tag_name('option'):
+                if option.text == new_group:
+                    option.click()
+                    break
+            #not work wd.find_element_by_xpath("//select[@name='group']/option[text()='[all]']").click
+            el = wd.find_element_by_xpath("//select[@name='group']")
+            for option in el.find_elements_by_tag_name('option'):
+                if option.text == '[all]':
+                    option.click()
+                    break
+
+            # if the contact is still available, tehn click on contact for adding
+        if len(wd.find_elements_by_name("selected[]")) > 0:
+            wd.find_element_by_css_selector("input[value='" + contact_id + "']").click()
+            wd.find_element_by_css_selector("input[value='Add to']").click()
+
+        self.return_to_contact()
+
+
+    #--------------------------------------
+
     def modify_first_contact(self):
         self.modify_contact_by_index(0)
 
@@ -112,14 +231,14 @@ class ContactHelper:
 
     def select_contact_to_edit_by_index(self, index):
         wd = self.app.wd
-            # open index element - my version based on recorder
-        #wd.find_elements_by_name("selected[]")[index].click()
-        #ind = str(index +2)
-        #wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr["+ind+"]/td[8]/a/img").click()
-            # other version from lesson 5_2
+                # open index element - my version based on recorder
+            #wd.find_elements_by_name("selected[]")[index].click()
+            #ind = str(index +2)
+            #wd.find_element_by_xpath("//table[@id='maintable']/tbody/tr["+ind+"]/td[8]/a/img").click()
+                # other version from lesson 5_2
         row = wd.find_elements_by_name("entry")[index]
         cell = row.find_elements_by_tag_name("td")[7]
-        ##cell.find_element_by_name("a").click()  <-- not valid !!!! remember
+            ##cell.find_element_by_name("a").click()  <-- not valid !!!! remember
         cell.find_element_by_tag_name("a").click()
 
         # less 7.4

@@ -4,6 +4,8 @@ from model.group import Group
 from model.contact import Contact
 # if c.deprecated is not valid fror SQL
 from pymysql.converters import decoders
+    # lesson 7.8
+from pymysql.converters import encoders, decoders, convert_mysql_timestamp
 
 class ORMFixture:
 
@@ -33,12 +35,19 @@ class ORMFixture:
     def __init__(self, host, name, user, password):
                 # if c.deprecated is not valid fror SQL
                 # self.db.bind('mysql', host=host, database=name, user=user, password=password)
-        self.db.bind('mysql', host=host, database=name, user=user, password=password, conv=decoders)
+                # for less 7.7, not for 7.8
+        conv = encoders
+        conv.update(decoders)
+        conv[datetime] = convert_mysql_timestamp
+        #self.db.bind('mysql', host=host, database=name, user=user, password=password, conv=decoders)
+                # for less 7.8
+        self.db.bind('mysql', host=host, database=name, user=user, password=password, conv=conv)
 
             # here doing the relation
         self.db.generate_mapping()
             #for monitoring SQL process
-        sql_debug(True)
+                # home task 22
+        ###sql_debug(True)
 
 # --------------- for GROUP ----------------------------
     def convert_groups_to_model(self, groups):
@@ -77,5 +86,7 @@ class ORMFixture:
                 # take only first element via [0]
                 # there is object called -orm_group-
         return self.convert_contacts_to_model(orm_group.contacts)
+
+
 
 

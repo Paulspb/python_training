@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from model.contact import Contact
 import random
 
@@ -11,9 +10,7 @@ def test_add_contact_to_group(app,db):
     groups = db.get_group_list()
     contact_random = random.choice(old_contacts)
         # take existing contact and just add into group
-    app.contact.add_to_one_group(contact_random, groups)  # new
-        # less 7.3 assert len(old_contacts) + 1 == app.contact.count()
-        # less 7.3 new_contacts = app.contact.get_contact_list()
+    app.contact.remove_from_one_group(contact_random, groups)  # new
     new_contacts = db.get_contact_list()
         # no need for remove old_contact as assert not verify of -group-
     assert sorted(old_contacts,key=Contact.id_or_max) == sorted(new_contacts,key=Contact.id_or_max)
