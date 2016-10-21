@@ -7,6 +7,8 @@ import jsonpickle
 from fixture.application import Application
     # less 7.1
 from fixture.db import DbFixture
+    # home task 22
+from fixture.orm import ORMFixture
 
 fixture = None
     #less 6.1
@@ -66,7 +68,7 @@ def app(request):
 #------------------------- less 7.1 DB
 #-------------------- fixture #2 ----------------------------------------
     # add something for DB connect
-    # scope = "session" ---- for init at the begon of session and stop at hte end (ones only)
+    # scope = "session" ---- for init at the begin of session and stop at hte end (ones only)
 @pytest.fixture(scope = "session")
 def db(request):
         # read from target.json , part -db-
@@ -79,6 +81,27 @@ def db(request):
     # do registration of request
     request.addfinalizer(fin)
     return dbfixture
+
+
+#-------------------- fixture #3  --- home task 22-------------------------------------
+    # add something for ORM connect
+    # scope = "session" ---- for init at the begin of session and stop at hte end (ones only)
+@pytest.fixture(scope = "session")
+def orm(request):
+    ##global fixture
+        # read from target.json , part -db-
+    orm_config = load_config(request.config.getoption("--target"))['db']
+        # this is new class - DbFixture into packge -fixture-
+    ormfixture = ORMFixture(host=orm_config['host'], name=orm_config['name'], user=orm_config['user'], password=orm_config['password'] )
+        # new class
+            ##db = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
+    def fin():
+        ormfixture.destroy()
+    # do registration of request
+    request.addfinalizer(fin)
+    return ormfixture
+
+
 
 @pytest.fixture(scope = "session", autouse= True)
     # read data from -target.json-

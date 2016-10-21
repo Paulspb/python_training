@@ -7,6 +7,10 @@ class ContactHelper:
     # constructor
     def __init__(self, app):
         self.app = app
+        #self.orm = orm
+            #-- home task 22
+        #self.orm = orm
+        # self.db = db
 
     def open_contact_page(self):
         wd = self.app.wd
@@ -86,32 +90,53 @@ class ContactHelper:
         self.return_to_contact()
         self.contact_cache = None
 
-    def add_to_one_group(self, contact, groups):
+    def add_to_one_group(self, contact, groups, orm):
         wd = self.app.wd
         self.return_to_contact()
-        new_group = self.select_one_group(contact, groups, "add")
+            #new_group = self.select_one_group(contact, groups, "add")
+        new_group = orm.select_one_group(contact, groups, "add")
             #print(contact.id, contact.firstname, contact.lastName, new_group)
-        if new_group == "xxx":
+        if new_group.name == "xxx":
             print("!!! all groups is already added to contact : 'first name' =" + contact.firstname)
         else:
-            self.adding_one_group(contact.id, new_group)
+            self.adding_one_group(contact.id, new_group, groups)
             self.contact_cache = None
+        return new_group  # oct,19 22-00
 
-    def remove_from_one_group(self, contact, groups):
+    def remove_from_one_group(self, contact, groups, orm):
         wd = self.app.wd
         self.return_to_contact()
-        new_group = self.select_one_group(contact, groups, "remove")
+        new_group = orm.select_one_group(contact, groups, "remove")
             #print(contact.id, contact.firstname, contact.lastName, new_group)
-        if new_group == "xxx":
+        if new_group.name == "xxx":
             print("!!!!!!!! no any group asssigned for this contact : 'first name' ="
                   + contact.firstname + "   'last name = " +contact.lastName)
         else:
-            self.delete_from_one_group(contact.id, new_group)
+            self.delete_from_one_group(contact.id, new_group, groups)
             self.contact_cache = None
+        return new_group  # oct,19 22-00
 
+
+    def get_groups_in_contact(self,contact):
+        #dborm = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
+        orm = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
+        l2 =3
+        #orm = self.orm
+        try:
+            l = orm.get_group_in_contact(Contact(id=str(contact.id)))
+            for item in l:
+                print(item)
+            print(len(l))
+        finally:
+            pass
+        return l
 
     def select_one_group(self, contact, groups, moving):
-        dborm  = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
+        #dborm  = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
+        #TypeError: Database object was already bound to MySQL provider
+        #orm = self.orm
+        wd = self.app.wd
+
             # create temp_group list  with whole names of group
         temp_group = []
         new_group_name = "xxx"
@@ -129,7 +154,8 @@ class ContactHelper:
                 # group_id is not 0
             if element.id != 0:
                 try:
-                    l1 = dborm.get_contact_in_group(Group(id=str(element.id)))
+                    #l1 = dborm.get_contact_in_group(Group(id=str(element.id)))
+                    l1 = orm.get_contact_in_group(Group(id=str(element.id)))
                     #get_contact_in_group
                         #if group ralated with any contact
                     if len(l1) != 0:
@@ -167,27 +193,24 @@ class ContactHelper:
 
 
     #-  home 22 ----------------------------------------------------
-    #String
-    #newGroup = "xxx";
-    #newGroup = selectOneGroup(contact, groups, "add");
-    #if (newGroup == "xxx") {
-    #System.out.println("!!! all groups is already added to contact : 'first name' =" + contact.getFirstname());
-    #} else {
-    #selectOneGroupForAdding(contact.getId(), newGroup);
-    #contactCache = null;
-    #}
-
-
-    def adding_one_group(self, contact_id, new_group):
+    def adding_one_group(self, contact_id, new_group, groups):
         wd = self.app.wd
             # select adding group by -new_group-
         if len(wd.find_elements_by_name("to_group")) > 0:
                 # not work wd.find_element_by_xpath("//select[@name='to_group']/option[text()='%s']" % new_group).click
             el = wd.find_element_by_xpath("//select[@name='to_group']")
-            for option in el.find_elements_by_tag_name('option'):
-                if option.text == new_group:
-                    option.click()
-                    break
+            if len(el.find_elements_by_tag_name('option')) > 0:
+                i1 = 0
+                groups_sorted = sorted(groups, key=lambda Group: Group.name)
+                for option in el.find_elements_by_tag_name('option'):
+                        # if group_name is the same for several groups
+                    if option.text == new_group.name:
+                        if groups_sorted[i1].id == new_group.id:
+                            option.click()
+                            break
+                    #if len(option.text) > 0:
+                    i1 = i1 + 1
+
             #not work wd.find_element_by_xpath("//select[@name='group']/option[text()='[all]']").click
             el = wd.find_element_by_xpath("//select[@name='group']")
             for option in el.find_elements_by_tag_name('option'):
@@ -203,16 +226,20 @@ class ContactHelper:
         self.return_to_contact()
 
 
-    def delete_from_one_group(self, contact_id, new_group):
+    def delete_from_one_group(self, contact_id, new_group, groups):
         wd = self.app.wd
             # select deleting group by -new_group-
         if len(wd.find_elements_by_name("group")) > 0:
-                # not work wd.find_element_by_xpath("//select[@name='to_group']/option[text()='%s']" % new_group).click
             el = wd.find_element_by_xpath("//select[@name='group']")
+                #i1 = 0
+                #groups_sorted = sorted(groups, key=lambda Group: Group.name)
             for option in el.find_elements_by_tag_name('option'):
-                if option.text == new_group:
-                    option.click()
-                    break
+                if option.text == new_group.name:
+                #    if groups_sorted[i1].id == new_group.id:
+                        option.click()
+                        break
+                #if option.text != "[all]" and option.text != "[none]" :
+                #    i1 = i1 + 1
 
             # if the contact is still available, tehn click on contact for adding
         if len(wd.find_elements_by_name("selected[]")) > 0:
@@ -226,7 +253,6 @@ class ContactHelper:
             if option.text == '[all]':
                 option.click()
                 break
-
 
 
     #--------------------------------------

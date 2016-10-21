@@ -88,5 +88,87 @@ class ORMFixture:
         return self.convert_contacts_to_model(orm_group.contacts)
 
 
+#--------- home task 22 ----------------------------------------------------------------------
+    def destroy(self):
+        self.db.disconnect
+
+    @db_session # means execute within connection to DB
+    def get_group_in_contact(self,contact):
+        orm_group = list(select(g for g in ORMFixture.ORMContact if g.id == contact.id))[0]
+        #orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == contact.id))[0]
+
+                # take only first element via [0]
+                # there is object called -orm_group-
+        #return self.convert_contacts_to_model(orm_group.contacts)
+        return self.convert_groups_to_model(orm_group.groups)
+
+
+    def get_groups_in_contact(self,contact):
+        print("\n")
+        try:
+            l = self.get_group_in_contact(Contact(id=str(contact.id)))
+            for item in l:
+                print(item)
+            print(len(l))
+        finally:
+            pass
+        return l
+
+#----------------------------------------------------------------------------------------------
+    def select_one_group(self, contact, groups, moving):
+            # create temp_group list  with whole names of group
+        temp_group = []
+        new_group_name = "xxx"
+            # movement = 'add' or 'remove'
+            ## fill-in temporary groups  with mark   '111'
+        for group1 in groups:
+           temp_group.append(Group(id=str(group1.id), name=group1.name, header = 111))
+
+        #print(contact.id, contact.firstname, contact.lastName)
+        #for y in temp_group:
+        ##   print(y.name, y.id, y.header, y.footer)
+
+
+        for element in temp_group:
+                # group_id is not 0
+            if element.id != 0:
+                try:
+                    l1 = self.get_contact_in_group(Group(id=str(element.id)))
+                    #get_contact_in_group
+                        #if group ralated with any contact
+                    if len(l1) != 0:
+                        for item in l1:
+                            #print(item)
+                                # if the contact present into this group, then marks as 0
+                            if item.id == contact.id:
+                                element.header = 0
+
+                        #print(len(l1))
+                finally:
+                    pass
+
+                #init value
+        choice = 2
+        if moving == "add":
+            choice = 111
+
+        if moving == "remove":
+            choice = 0
+
+            # read first group marked as '111' for add (still not used in contact)
+            # read first group marked as '0' for remove (still not used in contact)
+
+        for one_group in temp_group:
+            if one_group.header == choice:
+                if choice == 111:
+                    print(" *********** this group adding:  " + one_group.id + " " + one_group.name)
+                if choice == 0:
+                    print(" *********** this group removing:  " + one_group.id + " " + one_group.name)
+                return  one_group
+
+        return new_group_name
+
+
+
 
 

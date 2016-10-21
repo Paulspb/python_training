@@ -3,6 +3,8 @@ from selenium  import webdriver
 from fixture.session import SessionHelper
 from fixture.group import GroupHelper
 from fixture.contact import ContactHelper
+    #--home task 22
+#from fixture.orm import ORMFixture
 
 class Application:
 
@@ -25,6 +27,8 @@ class Application:
         self.contact = ContactHelper(self)
             # -add- less 5.5
         self.base_url = base_url
+            # home task 22
+        #self.orm = ORMFixture(self)
 
     def is_valid(self):
         try:
